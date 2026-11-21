@@ -11,7 +11,7 @@ Works on **amd64** and **arm64**. Unofficial: not affiliated with IceWhale or do
 Requirements: Linux, Docker (the script installs it if missing), sudo.
 
 ```bash
-curl -fsSL <link-to-install-script> -o install.sh
+curl -fsSL https://raw.githubusercontent.com/wave36762-glitch/CasaOS-Anywhere/refs/heads/main/Install.sh | sudo bash
 less install.sh   # please read it first
 bash install.sh
 ```
