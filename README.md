@@ -12,8 +12,8 @@ Requirements: Linux, Docker (the script installs it if missing), sudo.
 
 ```bash
 curl -fsSL https://raw.githubusercontent.com/wave36762-glitch/CasaOS-Anywhere/refs/heads/main/Install.sh | sudo bash
-less install.sh   # please read it first
-bash install.sh
+wget -qO- https://raw.githubusercontent.com/wave36762-glitch/CasaOS-Anywhere/refs/heads/main/Install.sh | sudo bash
+sudo bash install.sh
 ```
 
 Then open `http://<your-ip>:8080`.
