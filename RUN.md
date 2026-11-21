@@ -1,1 +1,1 @@
-
+curl -fsSL https://raw.githubusercontent.com/wave36762-glitch/CasaOS-Anywhere/refs/heads/main/Install.sh | sudo bash
