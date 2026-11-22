@@ -1,6 +1,5 @@
 <div align="center">
-  <img src="icon.ico" alt="Project Icon" width="512" height="512" />
-  <h1>CasaOS Anywhere</h1>
+  <img src="icon.ico" alt="Project Icon" width="1024" height="1024" />
 </div>
 
 # casaos-docker-installer
