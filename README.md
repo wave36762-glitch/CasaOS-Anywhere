@@ -1,3 +1,8 @@
+<div align="center">
+  <img src="icon.ico" alt="Project Icon" width="512" height="512" />
+  <h1>CasaOS Anywhere</h1>
+</div>
+
 # casaos-docker-installer
 
 Run [CasaOS](https://casaos.io) on any Linux distribution that can run Docker,
