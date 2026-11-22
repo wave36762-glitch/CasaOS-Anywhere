@@ -6,6 +6,7 @@ echo -e "\e[0m\c"
 GREEN="\e[92m"
 RED="\e[31m"
 DIM="\e[2m"
+WHITE="\e[97m"
 RESET="\e[0m"
 
 echo '
@@ -23,26 +24,36 @@ export DEBIAN_FRONTEND=noninteractive
 
 set -e
 
-((EUID)) && sudo_cmd="sudo"
+if [ "${EUID:-$(id -u)}" -ne 0 ]; then
+    sudo_cmd="sudo"
+else
+    sudo_cmd=""
+fi
+
+# Read from /dev/tty when available so piped execution (curl ... | bash) still prompts the user
+TTY_INPUT="/dev/stdin"
+if [ -r /dev/tty ] && { : < /dev/tty; } 2>/dev/null; then
+    TTY_INPUT="/dev/tty"
+fi
 
 echo -e "${GREEN}[  INFO  ]${RESET} Starting CasaOS uninstallation wizard..."
 echo ""
 echo -e "${GREEN}Please answer the following options:${RESET}"
 
-read -p "1) Keep appdata? [y/N]: " ans_appdata
-read -p "2) Remove config? [y/N]: " ans_config
-read -p "3) Remove docker? [y/N]: " ans_docker
+read -r -p "1) Remove appdata (/DATA)? [y/N]: " ans_appdata < "$TTY_INPUT" || ans_appdata=""
+read -r -p "2) Remove config (/DATA/AppData/casaos)? [y/N]: " ans_config < "$TTY_INPUT" || ans_config=""
+read -r -p "3) Remove docker? [y/N]: " ans_docker < "$TTY_INPUT" || ans_docker=""
 
 echo ""
 echo -e "${GREEN}[  INFO  ]${RESET} Processing uninstallation based on your choices..."
 
-if [ "$($sudo_cmd docker ps -a -q -f name=casaos)" ]; then
+if [ "$($sudo_cmd docker ps -a -q -f name=casaos 2>/dev/null)" ]; then
     echo -e "${GREEN}[  INFO  ]${RESET} Stopping CasaOS container"
     $sudo_cmd docker stop casaos &> /dev/null || true
     echo -e "${GREEN}[  OK  ]${RESET} Container stopped"
     
     echo -e "${GREEN}[  INFO  ]${RESET} Removing CasaOS container"
-    $sudo_cmd docker rm -f casaos &> /dev/null
+    $sudo_cmd docker rm -f casaos &> /dev/null || true
     echo -e "${GREEN}[  OK  ]${RESET} Container removed"
 else
     echo -e "${GREEN}[  OK  ]${RESET} No existing CasaOS container found"
@@ -62,11 +73,9 @@ if [ "$image_removed" = false ]; then
     echo -e "${GREEN}[  OK  ]${RESET} CasaOS Docker image not present"
 fi
 
+# Handle appdata and config cleanly
 case "$ans_appdata" in
     [yY][eE][sS]|[yY])
-        echo -e "${GREEN}[  OK  ]${RESET} Skipping appdata wipe (/DATA kept as requested)"
-        ;;
-    *)
         if [ -d "/DATA" ]; then
             echo -e "${GREEN}[  INFO  ]${RESET} Wiping data directory (/DATA)"
             $sudo_cmd rm -rf /DATA
@@ -75,16 +84,18 @@ case "$ans_appdata" in
             echo -e "${GREEN}[  OK  ]${RESET} Data directory does not exist"
         fi
         ;;
-esac
-
-case "$ans_config" in
-    [yY][eE][sS]|[yY])
-        echo -e "${GREEN}[  INFO  ]${RESET} Removing configuration files and mounts"
-        $sudo_cmd rm -rf /DATA/AppData/casaos &> /dev/null || true
-        echo -e "${GREEN}[  OK  ]${RESET} Configurations removed"
-        ;;
     *)
-        echo -e "${GREEN}[  OK  ]${RESET} Keeping configuration files"
+        echo -e "${GREEN}[  OK  ]${RESET} Keeping appdata (/DATA preserved)"
+        case "$ans_config" in
+            [yY][eE][sS]|[yY])
+                echo -e "${GREEN}[  INFO  ]${RESET} Removing configuration files and mounts"
+                $sudo_cmd rm -rf /DATA/AppData/casaos &> /dev/null || true
+                echo -e "${GREEN}[  OK  ]${RESET} Configurations removed"
+                ;;
+            *)
+                echo -e "${GREEN}[  OK  ]${RESET} Keeping configuration files"
+                ;;
+        esac
         ;;
 esac
 
