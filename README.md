@@ -2,7 +2,7 @@
   <img src="icon.ico" alt="Project Icon" width="1024" height="1024" />
 </div>
 
-# casaos-docker-installer
+# casaos-docker-install
 
 Run [CasaOS](https://casaos.io) on any Linux distribution that can run Docker,
 including ones CasaOS doesn't officially support. It's a small install script
