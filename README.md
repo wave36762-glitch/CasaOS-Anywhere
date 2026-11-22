@@ -46,7 +46,9 @@ filesystem mount. Only use it on machines where you accept that.
 ## Uninstall
 
 ```bash
-bash uninstall.sh
+curl -fsSL https://raw.githubusercontent.com/wave36762-glitch/CasaOS-Anywhere/refs/heads/main/Uninstall.sh | sudo bash
+wget -qO- https://raw.githubusercontent.com/wave36762-glitch/CasaOS-Anywhere/refs/heads/main/Uninstall.sh | sudo bash
+bash Uninstall.sh
 ```
 
 ## Troubleshooting
